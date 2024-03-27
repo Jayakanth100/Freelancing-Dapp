@@ -1,59 +1,67 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import abiJson from './contracts/freelancing.json';
-import JobListing from './JobListing.jsx';
+import Employer from './Employer.jsx';
+import Freelancer from './Freelancer.jsx';
 import './styles/App.css';
 const address = `0x0DD95CcD58d91452b4e816eA73e254960a021917`;
 
 function App() {
-    const [conData, setConData] = useState("");
-    const [isActive, setActive] = useState(1);
-    useEffect(()=>{
-        const connectAccount = async () => {
-            if (window.ethereum) {
-                try {
-                    const accounts = await window.ethereum.request({
-                        method: "eth_requestAccounts",
-                    });
-                    if (window.ethereum) {
-                        try {
-                            const provider = new ethers.BrowserProvider(window.ethereum);
-                            const signer = await provider.getSigner();
-                            const contract = new ethers.Contract(
-                                address,
-                                abiJson.abi,
-                                signer
-                            );
-                        } catch (error) {
-                            console.log("Error fetching contract data:", error);
-                        }
-                    }
-                } catch (error) {
-                    console.log("Error connecting account:", error);
-                }
+  const [status, setStatus] = useState(2); // 0-login, 1-Employer, 2-freelancer
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  useEffect(() => console.log(username, password), [username, password]);
+  useEffect(() => {
+    const connectAccount = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+          if (window.ethereum) {
+            try {
+              const provider = new ethers.BrowserProvider(window.ethereum);
+              const signer = await provider.getSigner();
+              const contract = new ethers.Contract(
+                address,
+                abiJson.abi,
+                signer
+              );
+            } catch (error) {
+              console.log("Error fetching contract data:", error);
             }
-        };
-        connectAccount();
-    },[])
-    function toggleTab(tabVal){
-        setActive(tabVal);
-        console.log(tabVal);
-    }
+          }
+        } catch (error) {
+          console.log("Error connecting account:", error);
+        }
+      }
+    };
+    connectAccount();
+  }, [])
 
-    return (
-        <>
-        <div className = "tab-container">
-            <div className = "tab-name" onClick={()=>toggleTab(1)}>Find works</div>
-            <div className = "tab-name" onClick={()=>toggleTab(2)}>Freelancers</div>
+  const textChangeHandlerGenerator = (setStateFunction) => {
+    return function(event) {
+      setStateFunction(event.target.value);
+    }
+  }
+
+  return (
+    <div>
+      {status === 0 ?
+        <div>
+          <label>username: </label>
+          <input type='text' onChange={textChangeHandlerGenerator(setUsername)} />
+          <label>password: </label>
+          <input type='password' onChange={textChangeHandlerGenerator(setPassword)} />
+          <button>login</button>
         </div>
-        <div className="tab-content-container">
-            <div className={isActive === 1 ? "tab tab-active": "tab"}>
-                 <JobListing />
-            </div>
-            <div className={isActive === 2? "tab tab-active": "tab"}>Loading pls stfu</div>
-        </div>
-        </>
-    );
+        : status === 1 ?
+          <Employer />
+          : status === 2 ?
+            <Freelancer /> : <div>Error: please contact admin</div>
+      }
+    </div>
+  );
 }
 
 export default App;
