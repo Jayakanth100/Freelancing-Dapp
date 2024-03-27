@@ -7,7 +7,7 @@ import './styles/App.css';
 const address = `0x0DD95CcD58d91452b4e816eA73e254960a021917`;
 
 function App() {
-  const [status, setStatus] = useState(2); // 0-login, 1-Employer, 2-freelancer
+  const [status, setStatus] = useState(0); // 0-login, 1-Employer, 2-freelancer
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   useEffect(() => console.log(username, password), [username, password]);
@@ -53,6 +53,13 @@ function App() {
           <input type='text' onChange={textChangeHandlerGenerator(setUsername)} />
           <label>password: </label>
           <input type='password' onChange={textChangeHandlerGenerator(setPassword)} />
+
+          <select onChange={(event) => setStatus(+event.target.value)}>
+
+            <option value={"default"}>{"<none>"}</option>
+            <option value={1}>employer</option>
+            <option value={2}>freelancer</option>
+          </select>
           <button>login</button>
         </div>
         : status === 1 ?
