@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import JobList from "./JobList.jsx"
-import { ethers } from 'ethers';
-import abiJson from './contracts/freelancing.json';
-const address = `0x20Aee99A45ca7523Ffd30F19cA27bcA304dF2911`;
 
+import { ethers } from 'ethers';
+import abiJson from './contracts/Freelancing.json';
+import {address} from './config.js'
 
 const JobListing = ()=>{
     const [jobs, setJobs] = useState("");
@@ -21,7 +21,7 @@ const JobListing = ()=>{
                     )
                     const data = await contract.getJobs();
                     setJobs(data);
-                    console.log(data);
+                    console.log("stipend: ",data);
                     // console.log(Object.values(data)[0].jobName);
                     // console.log(data.jobName);
                 } 

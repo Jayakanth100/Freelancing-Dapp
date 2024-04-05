@@ -1,6 +1,6 @@
 import './styles/list.css';
-import abiJson from './contracts/freelancing.json';
-const address = `0x0DD95CcD58d91452b4e816eA73e254960a021917`;
+import abiJson from './contracts/Freelancing.json';
+import {address} from './config.js'
 import { ethers } from 'ethers';
 
 const JobList = ({job})=>{
@@ -11,6 +11,7 @@ const JobList = ({job})=>{
     async function Jobselection(id,lancer){
         if(window.ethereum){
             try{
+                
                 const provider = new ethers.BrowserProvider(window.ethereum); 
                 const signer = await provider.getSigner();
                 const contract = new ethers.Contract(
@@ -18,10 +19,7 @@ const JobList = ({job})=>{
                     abiJson.abi,
                     signer
                 )
-                const data = await contract.selectJob(id,lancer,"Jayakanth", false);
-                // console.log(data);
-                // console.log(Object.values(data)[0].jobName);
-                // console.log(data.jobName);
+                const data = await contract.selectJob(id, lancer, "Jayakanth", true);
             } 
             catch(err){
                 console.log("Error in ethereum connection: ", err);
@@ -32,17 +30,18 @@ const JobList = ({job})=>{
     return(
         <>
         <div className="list-container">
-            {Object.values(job).map((el, idx)=>
-                <li onClick={()=>Jobselection(job[0],job[5])} 
-                className="li" key={idx}>{el}</li>
+            {Object.values(job).filter((el)=>el!==true).map((el, idx)=>{
+                console.log("h  :", el.toString());
+                return <li onClick={()=>Jobselection(job[0],job[5])} 
+                className="li" key={idx}>{el.toString()}</li>
+            }
             )}
         </div>
         </>)
 
         // string jobName;
         // string jobDescription;
-        // Selection progress;
-        // bool isSelected;
+        // Selection progress; bool isSelected;
         // address lancer;
         // uint256 amount;
 }

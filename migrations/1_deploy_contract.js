@@ -1,4 +1,4 @@
-var myContract = artifacts.require("../contracts/freelancing.sol");
+var myContract = artifacts.require("../contracts/Freelancing.sol");
 module.exports = (deployer)=>{
     deployer.deploy(myContract);
 }

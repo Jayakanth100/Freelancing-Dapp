@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import abiJson from './contracts/freelancing.json';
+import abiJson from './contracts/Freelancing.json';
 import Employer from './Employer.jsx';
+import Login from './Login.jsx';
 import Freelancer from './Freelancer.jsx';
 import './styles/App.css';
-const address = `0x0DD95CcD58d91452b4e816eA73e254960a021917`;
-
+import {address} from './config.js'
 function App() {
   const [status, setStatus] = useState(0); // 0-login, 1-Employer, 2-freelancer
   const [username, setUsername] = useState("");
@@ -27,6 +27,8 @@ function App() {
                 abiJson.abi,
                 signer
               );
+                const data = await contract.addFreelancers("Jaya");
+                console.log("freelancer added status: ",data);
             } catch (error) {
               console.log("Error fetching contract data:", error);
             }
@@ -39,35 +41,20 @@ function App() {
     connectAccount();
   }, [])
 
-  const textChangeHandlerGenerator = (setStateFunction) => {
-    return function(event) {
-      setStateFunction(event.target.value);
-    }
-  }
-
+    console.log(status);
   return (
-    <div>
-      {status === 0 ?
-        <div>
-          <label>username: </label>
-          <input type='text' onChange={textChangeHandlerGenerator(setUsername)} />
-          <label>password: </label>
-          <input type='password' onChange={textChangeHandlerGenerator(setPassword)} />
-
-          <select onChange={(event) => setStatus(+event.target.value)}>
-
-            <option value={"default"}>{"<none>"}</option>
-            <option value={1}>employer</option>
-            <option value={2}>freelancer</option>
-          </select>
-          <button>login</button>
-        </div>
-        : status === 1 ?
-          <Employer />
-          : status === 2 ?
-            <Freelancer /> : <div>Error: please contact admin</div>
-      }
+     <> 
+     <div className="tab">
+        <div onClick={()=>setStatus(0)}>Login</div>
+        <div onClick={()=>setStatus(1)}>FreeLancer</div>
+        <div onClick={()=>setStatus(2)}>Employer</div>
+     </div> 
+      <Login/>
+    <div className="tab-content-container">
+      <Freelancer className={status === 1? "content-active freelancer-content": "content-inactive"}/>
+        <Employer className={status === 2 ? "content-active employer-content": "content-inactive"}/>
     </div>
+      </>
   );
 }
 
